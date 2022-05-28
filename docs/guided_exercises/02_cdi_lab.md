@@ -1,4 +1,4 @@
-# Contexts and Dependency Injection (CDI) hands on exercises
+# Contexts and Dependency Injection (CDI) 
 
 ## Introduction
 
@@ -181,16 +181,16 @@ When working with Java code, we can leverage the CDI API to create classes that 
 
 5. Validate if you did everything right by running the main method in `App4`. You should see in a log output for each observer (three in total), containing messages like: "We got the news, we'll publish it on Social Media: Java 17 has arrived!!".
 
-    ```
-   INFO: WELD-ENV-002003: Weld SE container 724cb2e4-edb7-4de5-8b0f-df2adc814bb3 initialized
-   Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.SocialMedia accept
-   INFO: We got the news, we'll publish it on Social Media: Java 17 has arrived!!
-   Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.NewsPaper accept
-   INFO: We got the news, we'll publish it on a newspaper: Java 17 has arrived!!
-   Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.Magazine accept
-   INFO: We got the news, we'll publish it on a magazine: Java 17 has arrived!!
-   Oct 10, 2021 8:52:36 PM org.jboss.weld.environment.se.WeldContainer shutdown
-   INFO: WELD-ENV-002001: Weld SE container 724cb2e4-edb7-4de5-8b0f-df2adc814bb3 shut down
+    ```shell
+    INFO: WELD-ENV-002003: Weld SE container 724cb2e4-edb7-4de5-8b0f-df2adc814bb3 initialized
+    Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.SocialMedia accept
+    INFO: We got the news, we'll publish it on Social Media: Java 17 has arrived!!
+    Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.NewsPaper accept
+    INFO: We got the news, we'll publish it on a newspaper: Java 17 has arrived!!
+    Oct 10, 2021 8:52:36 PM my.compary.cdi.lab.news.Magazine accept
+    INFO: We got the news, we'll publish it on a magazine: Java 17 has arrived!!
+    Oct 10, 2021 8:52:36 PM org.jboss.weld.environment.se.WeldContainer shutdown
+    INFO: WELD-ENV-002001: Weld SE container 724cb2e4-edb7-4de5-8b0f-df2adc814bb3 shut down
     ```
 
     !!! Question "Why these messages were logged, if we never invoked the method `accept` in those classes (e.g. `magazine.accept(news)`)?"
