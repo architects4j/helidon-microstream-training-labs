@@ -1,5 +1,7 @@
 nav:
     - Home: index.md
     - Guided exercises:
-        guided_exercises
+        guided_exercises/00_environment.md
+        guided_exercises/01_helidon_getting_started.md
+        guided_exercises/02_cdi_lab.md
     - ...
