@@ -56,7 +56,7 @@ With CDI developers have the possibility to manage stateful components' lifecycl
 
 To be able to go through this guided exercise, you will need to have the following components in your dev environment:
 
-* Have finished the steps described in [Preparing your environment](guides/environment.md)
+* Have finished the steps described in [Preparing your environment](00_environment.md)
 
 ## Hands-on practice  
 
