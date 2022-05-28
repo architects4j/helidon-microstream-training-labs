@@ -1,3 +1,5 @@
+Access the labs at: https://architects4j.github.io/helidon-microstream-training-labs/
+
 # Labs and exercises
 
 * [CDI - Context and Dependency Injection](cdi-lab.md)
@@ -21,8 +23,25 @@ enumerate-headings ->
 
 The training labs are based on mkdocs.
 
-After cloning this repo and during development check the changes with:
-* `mkdocs serve` - Start the live-reloading docs server.
-  pip install mkdocs-bootstrap4
+Env setup: 
+
+```
+  pip install mkdocs
   pip install -e mkdocs-material
   pip install mkdocs-awesome-pages-plugin
+  pip install mkdocs-enumerate-headings-plugin
+```
+
+Development: 
+
+After cloning this repo and during development check the changes. It will start the live-reloading docs server.
+
+```
+mkdocs serve
+````
+
+Publish:
+mkdocs gh-deploy --force
+
+
+
