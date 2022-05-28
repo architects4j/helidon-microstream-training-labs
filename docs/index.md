@@ -6,13 +6,7 @@ hide:
 
 # Home
 
- Prerequisites
 
-* Proficiency in using a Java IDE such as Eclipse, IntelliJ, or Netbeans
-* Fundamental knowledge in Java
-* Proficiency in object-oriented programming
-* Experience with Maven
-* Experience with Git
 
 
 # Practicing with guided hands-on labs

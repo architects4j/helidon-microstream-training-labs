@@ -24,13 +24,13 @@ theme:
   locale: en
   palette:
     - scheme: slate
-      primary: menu
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
     - scheme: default
-      primary: menu
+      primary: blue
       accent: light blue
       toggle:
         icon: material/toggle-switch
