@@ -12,6 +12,6 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install mkdocs-material 
-      - run: pip install awesome-pages 
-      - run: pip install enumerate-headings 
+      - run: pip install mkdocs-awesome-pages-plugin 
+      - run: pip install mkdocs-awesome-pages-plugin 
       - run: mkdocs gh-deploy --force
