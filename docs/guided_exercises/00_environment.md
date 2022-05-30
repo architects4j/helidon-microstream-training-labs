@@ -2,12 +2,13 @@
 
 ## Prerequisites
 
-* Maven CLI
-* Git CLI
-* Java 11
-* An IDE of your preference
-* If using Windows, PowerShell is recommended.
-* Helidon CLI _(optional)_
+* Maven CLI;
+* Git CLI;
+* Java 11;
+* An IDE of your preference;
+* If using Windows, PowerShell is recommended;
+* Helidon CLI _(optional)_;
+* REST client tools like cURL or postman _(Optional)_;
 
 !!! INFO
 

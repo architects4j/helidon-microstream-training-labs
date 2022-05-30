@@ -3,6 +3,7 @@
 site_name: "Learning Microprofile"
 site_description: "A set of demos and guided-exercises about Microprofile with Helidon"
 site_author: "Karina Varela and Otávio Santana"
+repo_url: https://github.com/architects4j/helidon-microstream-training-labs
 
 plugins:
   - search:
@@ -38,13 +39,13 @@ theme:
         primary: light-blue
 
   features:
+    - navigation.indexes
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
-    - navigation.expand
     - toc.follow
-    - toc.integrate
     - navigation.top
+
 markdown_extensions:
   - meta
   - def_list
