@@ -1,0 +1,9 @@
+.cards{
+    width: 50% !important;
+    float: left!important;
+    text-align: center;
+}
+.card-button {
+    padding: 0.625em 1.3em !important;
+}
+

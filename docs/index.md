@@ -6,10 +6,7 @@ hide:
 
 # Home
 
-
-
-
-# Practicing with guided hands-on labs
+ Practicing with guided hands-on labs
 
 - CDI - Context and Dependency Injection
 - Getting started with Helidon

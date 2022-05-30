@@ -4,6 +4,10 @@ site_name: "Learning Microprofile"
 site_description: "A set of demos and guided-exercises about Microprofile with Helidon"
 site_author: "Karina Varela and Otávio Santana"
 repo_url: https://github.com/architects4j/helidon-microstream-training-labs
+edit_uri: ""
+copyright: "Developed with 🤍 &nbsp; by Architects4j"
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search:
@@ -18,11 +22,21 @@ plugins:
         - index.md
         - more/sample_projects.md
         - more/training.md
+        - more/architects4j.md
+  - git-revision-date-localized:
+      type: iso_date
+
+extra:
+  generator: false
+
 
 theme:
   name: material
   navigation_depth: 2
   locale: en
+  generator: false
+  icon:
+    repo: fontawesome/brands/github-alt
   palette:
     - scheme: slate
       primary: blue
@@ -43,10 +57,15 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.prune
     - toc.follow
     - navigation.top
 
 markdown_extensions:
+  - abbr
+  - pymdownx.snippets
   - meta
   - def_list
   - admonition
