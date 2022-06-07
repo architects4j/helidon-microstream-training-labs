@@ -4,13 +4,7 @@ hide:
 - toc
 ---
 
-# Home
+# Practicing MicroProfile with Helidon
 
- Practicing with guided hands-on labs
-
-- CDI - Context and Dependency Injection
-- Getting started with Helidon
-- Acme Store - Java RESTFul service with Helidon
-- RestClient
-
+[ :octicons-pencil-24: Open the guided exercises](guided_exercises/00_environment){ .md-button .md-button--primary }
 
