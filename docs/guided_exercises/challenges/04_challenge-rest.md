@@ -1,47 +1,82 @@
-# Creating a RESTFul Java application with Helidon 
+# Golden service apis for ACME Store       
 
-In this exercise you will create a RESTful Java application from scratch, using Helidon. Let's take a look at the use case and the exercise goals. 
+In this exercise you can validate and practice your knowledge of the following concepts:
+
+* Java microservice implementation with Helidon; 
+* API designing to meet specific criteria;
+* RESTful services implementation with JAX-RS;
+* Extense API documentation with OpenAPI;
+* In-memory persistence with MicroStream;
+* Validation with Bean Validation;
+* Implicit and constant usage of CDI;
+
+Getting familiar with the use case and the exercise goals described next is highly recommended, as a detailed 
+step-by-step guide is not provided. 
+
+**Friendly advice**: consider leveraging this opportunity to 
+upskill by making the best use of your knowledge and research skills to code the solution without replicating the 
+provided solution.
 
 ## Scenario
 
-You were recently hired by a small company Acme Store. The company is new to the online world and they have a technical team that want to evaluate what a Java service would look like in case they wanted to start an e-commerce. 
+Your consultancy was requested by the Acme Store company. The company's technical team wants to learn good 
+practices and recommendations for Java microservices built on top of the building blocks offered by specifications. 
+They demonstrate interest in validating the experience of delivering Microprofile on top of the Helidon 
+runtime. 
 
-Your first task is to create a sample webservice using Java programming language, and based on the JAX-RS specification. They will evaluate whether they should move forward using Java technologies, using your MVP as a starting point. They've heard of MicroProfile and are interested in a solution with Helidon.
+Your task is to provide a Java backend service, with Helidon, to handle the basic operations of the store's products . 
 
 ### Goals
 
-Here are the pre-requisites of the first delivery of this application. To help you as you go, you can click on 
-each item to mark it as "done".
+See below the solution's pre-requisites. (_Easily track your progress by marking tasks as "done"._)
 
-- [ ] The new application should be called `acme-store-service`.  It should use *Microprofile 3.3* and *Helidon*.
-- The goal is to work with products. The `Product` should have:
-    - [ ] The ID is the `name` : mandatory and should be at max 100 chars.
+- [ ] The service should be named `acme-store-rest`. It must rely on *Microprofile 3.3* and *Helidon*.
+- The service handles operations for `Products` maintenance. A `Product` should have:
+    - [ ] An ID, which is the `name`: mandatory and should be at max 100 chars.
     - [ ] A `description`:  mandatory, should have at least 5 chars
     - [ ] A `quantity`: mandatory and should be higher than 0. 
-- It should allow all the CRUD operations for a `Product`:
+- The following operations for a `Product` should be available:
     - [ ] List all the products
     - [ ] Insert a new product
     - [ ] Retrieve a product by ID
     - [ ] Update a product based on its ID
     - [ ] Delete a product using its ID
 - It should be a RESTful application. The urls should follow these rules:
-    - [ ] To list all products:  GET "/products/"
+    - [ ] To list all products:  GET "/products"
+    - [ ] To insert a product: POST "/products" 
     - [ ] To find a product by ID: GET "/products/{productName}"
     - [ ] To delete a product: DELETE "/products/{productName}"
     - [ ] To update a product: PUT "/products/{productName}"
-    - [ ] To insert a product: POST "/products/{productName}"
+- The APIs should be properly documented:
+  - [ ] All APIs should have documentation for the `Operation`, including `summary` and `description`;
+  - [ ] The responses (`APIResponse`) should be documented according to potential results, with proper 
+    `description` for returned HTTP codes (`responseCode`, e.g. 200, 404).
+- The APIs should include information about release and stability through tags:
+  - The following apis are part of the first release, and tagged (`@Tag`) as `1.0`:
+    - [ ] List all
+    - [ ] Find by ID
+    - [ ] Save new product
+  - These APIs are still in BETA phase, and are tagged (`@Tag`) as `BETA`:
+    - [ ] Update 
+    - [ ] Delete
+ 
+## Hands-on time: implementing the project
 
-## Implementing the project
+To save you time, the customer's team has created a basic project using the [microprofile starter](https://start.
+microprofile.io/) and they have provided some domain related objects and boilerplate code. 
 
-We recommend you to try creating the project from scratch. If you need, you can take a look at the [restaurant example](helidon-microstream-training-demos/tree/main/restaurant) demonstrated by the instructor.
-
-You can find some tips below.
+1. Get started by cloning the project to your machine (if you haven't already). 
+```
+git clone https://github.com/architects4j/helidon-microstream-training-labs-foundation
+cd acme-store-rest
+```
+2. Open the project in your IDE of choice and give it an overall look. You can find multiple comments pointing to 
+   code that needs adjustment.
+3. If you are feeling confident, go ahead and get started! If you need some extra help, check the following section. 
 
 ## Tips and hints
 
 ### Creating the project
-
-1. You can use the [microprofile starter](https://start.microprofile.io/) to create your Helidon application based on Microprofile 3.3. You don't need to select any of the "Examples for specifications". 
 
 2. You will need to create the POJO `Product.java` with the described attributes.
 
