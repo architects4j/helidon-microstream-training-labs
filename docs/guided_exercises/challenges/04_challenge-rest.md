@@ -59,11 +59,27 @@ See below the solution's pre-requisites. (_Easily track your progress by marking
   - These APIs are still in BETA phase, and are tagged (`@Tag`) as `BETA`:
     - [ ] Update 
     - [ ] Delete
- 
-## Hands-on time: implementing the project
 
-To save you time, the customer's team has created a basic project using the [microprofile starter](https://start.
-microprofile.io/) and they have provided some domain related objects and boilerplate code. 
+### Expected results
+
+The solution should look like this: 
+
+![Swagger API](../images/04_expected_endpoints.png)
+
+<div class="video-wrapper">
+  <iframe src="https://www.youtube.com/embed/O8aeDOkmYPw" frameborder="0" 
+allowfullscreen></iframe>
+</div>
+
+
+## Hands-on guidance
+
+To save your time, the customer's team has created a basic project using the [microprofile starter](https://start.
+microprofile.io/). They have provided domain related objects and boilerplate code. If you 
+prefer, you can also start a project from scratch and use the quickstart project in case you need to check 
+dependencies configuration and such.
+
+### The quickstart project: acme-store-rest
 
 1. Get started by cloning the project to your machine (if you haven't already). 
 ```
@@ -72,105 +88,175 @@ cd acme-store-rest
 ```
 2. Open the project in your IDE of choice and give it an overall look. You can find multiple comments pointing to 
    code that needs adjustment.
-3. If you are feeling confident, go ahead and get started! If you need some extra help, check the following section. 
+3. If you are feeling confident, go ahead and get started with the requirements implementation. For general guidance, follow the next sections.
 
-## Tips and hints
+**Persistence**
 
-### Creating the project
+The quickstart project is built on top of a ultra-fast in-memory persistence with [MicroStream](https://microstream.
+one/). Learn more about this persistence option by checking the implementation of the `org.a4j.product.Inventory` class, enabled 
+by the dependency `one.microstream:microstream-integrations-cdi:`.
 
-2. You will need to create the POJO `Product.java` with the described attributes.
+### Implementing the solution 
 
-3. You don't need database persistence. You can use in-memory repository. To get started faster, you can create a `ProductRepository` interface, and an implementation of it, the `ProductRepositoryMemory`. You can use the [RestaurantRepository](https://github.com/otaviojava/payara-fastlane-demos/blob/main/restaurant/src/main/java/my/compary/restaurant/RestaurantRepository.java) and [RestaurantRepositoryMemory](https://github.com/architects4j/helidon-microstream-training-demos/blob/main/restaurant/src/main/java/com/otaviojava/workshop/microstream/helidon/restaurant/RestaurantRepositoryMemory.java) as an inspiration.  
+#### REST Endpoints
 
-    !!! TIP
-    
-        Notice the CDI scope defined for the [RestaurantRepositoryMemory](https://github.com/architects4j/helidon-microstream-training-demos/blob/0af41f1242f4fb37c538829d8291e85250d82a89/restaurant/src/main/java/com/otaviojava/workshop/microstream/helidon/restaurant/RestaurantRepositoryMemory.java#L11) bean. 
+The product's endpoints are partially implementated in the class `ProductResource`.  
 
-4. You will need a `ProductController` to implement your REST APIs:
-    1. To best fit this application need, it can be configured with `@RequestScope`.
-    5. Remember to set the `javax.ws.rs.@Path` according to the goals of the project;
-    1. You can use `@Inject` to use your `ProductRepository` and manipulate the data.
-    2. Make sure to avoid any exceptions in case an invalid data is sent to your endpoints.
-    3. To differenciate your APIs, you can annotate your methods with: `@DELETE`, `@PUT`,  `@POST` and `@GET` from `javax.ws.rs`.
-    4. To create an endpoint like `/products/{productName}`, you can annotate the respective method with `@Path("{id}")` and make sure you add a @pathParam to your method. Example:
+4. Use a `ProductResource` to implement your REST APIs:
+    1. **Scope:** An appropriate CDI scope should be set for this bean. The `@RequestScope` should be enough.
+    2. **Path**: Remember to set the `javax.ws.rs.@Path` according to the goals of the project;
+    3. **HTTP Methods**: To differentiate APIs and map incoming requests to http methods, annotate the methods with: 
+       `@DELETE`, 
+       `@PUT`, `@POST` and `@GET` from `javax.ws.rs`.
+    4. **Custom paths**: To create an endpoint like `/products/{id}`, you can annotate a method with `@Path("{id}")` and 
+       add `@pathParam` to the parameter. Example:
 
         ```java
         public Product findById(@PathParam("id")String id) {}
         ```
-
+       
+    5. **Exception Handling**: Avoid errors in case an invalid data is sent to your endpoints. 
+       `WebApplicationException` can be used for this purpose. Example:
+       ```java
+        repository.findById(id).orElseThrow(() ->
+            new WebApplicationException("There is no product with the id " +
+                id, Response.Status.NOT_FOUND));
+       ```
+       
+    6. **Responses with HTTP codes that make sense**: `Response.Status` provides a list of possibilities. Example:
+       ```java
+       return Response.status(Response.Status.CREATED)
+                    .entity(repository.save(product))
+                    .build();
+       ```
+       
 ### Field validation
 
 To implement the business rules related to the product attributes, you can use Bean Validation annotations on your `Product.java`. 
 
-1. To do so, you need to add the following dependency in your `pom.xml`
-
+1. The following dependency was already added to the project's `pom.xml`
 ```xml
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>2.0.2</version>
-            <scope>provided</scope>
-        </dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.ext</groupId>
+    <artifactId>jersey-bean-validation</artifactId>
+</dependency>
 ```
 
-2. You can use the annotations `@NotBlank` and `@Size` from `javax.validation.constraints` on each attribute to define the rules and error message you want to associate with it.
+2. In the class `Product.java`, use the multiple `javax.validation.constraints` options (like `@NotBlank`, 
+   `@NotNull`, `@Size`). Configure each attribute's contraints accordingly along with the error message you 
+   want to associate with it. Example: 
+```java
+    @NotBlank
+    @Size(min = 3, max = 100, message = "The name size should be between 3 and 100 chars")
+    private final String name;
+```
+
+3. In the `ProductResource.java` class, identify the methods where validation is needed, and use the `@Valid` 
+   annotation for the parameters. Example:
+```java
+public Product update(@PathParam("id") String id, @Valid Product product) {
+```
+
+### APIs documentation with OpenAPI
+
+#### Schema
+
+The schema configuration can be done through annotations in the data objects, like `Product`. 
+
+1. Notice the class schema is already configured. No extra changes are needed here:
+```java
+@Schema(name = "Product", description = "The entity that represents a product of acme store")
+public class Product {
+```
+2. Configure the `@Schema` for all the attributes. Don't forget to add an `example` attribute.
+3. Later on, we will use these configured schemas on the `ProductResource` OpenAPI configurations.
+
+#### The endpoints
+
+1. Configure the `@Tag` for each method as specified in the exercise goals. Example:
+```java
+@Tag(name = "BETA", description = "APIs currently in beta state")
+```
+2. For each method, configure the `@Operation` details with a `summary` and `description`;
+3. For each method, specify possible responses with `@APIResponse`, setting the `responseCode` and the `description` 
+   that explains what this response means. Example:
+```java
+@APIResponse(responseCode = "200", description = "Product successfully found")
+```
+4. Some `@APIResponse` might require extra information about the content being returned. This is where you can use 
+   the schema we configured previously in the `Product` class. Example of an APIResponse for the findById operation:
+```java
+    @APIResponse(
+            description = "The product",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Product.class)
+            )
+    )
+```
+5. Input parameters may also require API documentation. For example, when saving a product, we can inform the user 
+   what is the expected input data by using the `@RequestBody` annotation, and the attributes `description` and 
+   `content`. The `content` attribute points to our product schema. See an example below:
+```java
+    public Response insert(
+            @RequestBody(
+                    description = "The product", 
+                    content = @Content(
+                            mediaType = "application/json", 
+                            schema = @Schema(implementation = Product.class)))
+            @Valid Product product) {
+
+```
 
 ### Running your application
 
-* To test your application, you can package it with Maven, run with Java, and use Postman, curl, or other tool of preference to invoke the rest APIs. 
+* To test your application, you can package it with Maven, run with Java, and use the OpenAPI UI, Postman, curl, or 
+  other tool of preference to invoke the rest APIs. 
 
-* To package your application:
-
-  ```bash
-  $ mvn clean package
-  ```
-
-* To run your application: 
-
-  ```shell
-  java -jar target/acme-store-service.jar
-  ```
-* or with helidon cli:
-
-    ```
-    helidon dev
-    ```
-
-* By default it will run on port 8080. So you should be able to test the application with the following request examples:
-  * Insert a new product
-
+* To package and run your application 
+    * without Helidon CLI:
     ```shell
-    curl --location --request POST 'http://localhost:8080/products' \
+    mvn clean package
+    java -jar target/acme-store-rest.jar
+    ```
+    * or, using Helidon CLI:
+      ```shell
+      helidon build
+      helidon dev
+      ```
+    
+* By default it will run on port 8081, as configured in the `microprofile-config.properties`. 
+* Validate your APIs documentation with OpenAPI UI at: [http://localhost:8081/openapi-ui/]()
+* Check the service implementation with the following request examples:
+    * **Insert** a new product
+    ```shell
+    curl --location --request POST 'http://localhost:8081/products' \
     --header 'Content-Type: application/json' \
     --data-raw '{"name": "bottle", "description": "Can store cold and hot liquids.", "quantity": "2"}'
     ```
-    
-  * List all products
-  
+    * **List** all products
     ```shell
-    curl --location --request GET 'http://localhost:8080/products'
+    curl --location --request GET 'http://localhost:8081/products'
     ```
-  * Search a product by ID (name)
-  
+    * **Search** a product by ID (name)
     ```shell
-    curl --location --request GET 'http://localhost:8080/products/bottle'
+    curl --location --request GET 'http://localhost:8081/products/bottle'
     ```
-  * Update a product using its ID (name)
-  
+    * **Update** a product using its ID (name)
     ```shell
-    curl --location --request POST 'http://localhost:8080/products/bottle' \
+    curl --location --request POST 'http://localhost:8081/products/bottle' \
     --header 'Content-Type: application/json' \
     --data-raw '{"name": "bottle", "description": "Can store ONLY cold liquids.", "quantity": "2"}'
     ```
-
-  * Delete a product by ID (name)
-  
+    * **Delete** a product by ID (name)
     ```shell
-    curl --location --request DELETE 'http://localhost:8080/products/bottle'
+    curl --location --request DELETE 'http://localhost:8081/products/bottle'
     ```
 
-If you can successfully execute the above requests, it means your endpoints are working! The next step is to try data that actually breaks the business rules and validate if your application is validating for example, the required fields.
+* The next step is to try data that actually breaks the business rules and validate if your application is validating 
+for example, the required fields.
+* If you can successfully execute the above items, it means you acomplished all this challenge goals!
 
 !!! success "Congratulations!"
 
-    You've finished your first task in the Acme Store! You have created the base project that will be later used to persist the e-commerce data using a database, will have properly documented APIs, and much more! We're looking forward to seeing you upskilling by working on upcoming challenges!
+    You've finished your task for Acme Store with great success! You have created an examplar backend service that be used as a model, with good examples of usage of RESTFul concepts, beans validation, well-documented APIs, and much more! We're looking forward to seeing you upskilling by working on upcoming challenges!
