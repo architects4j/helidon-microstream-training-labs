@@ -1,4 +1,4 @@
-nav:
+git nav:
     - Home: index.md
     - Guided Exercises:
         guided_exercises
