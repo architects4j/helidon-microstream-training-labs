@@ -55,9 +55,15 @@ Helidon CLI is available for Helidon 2+.
 
 ## Prepare your working directory
 
-Some exercises will start with preconfigured projects that you should have available in your development environment. To get the projects, please clone the following git repository: 
+The exercises are built on top of quickstart projects, a foundation of preconfigured projects.
+You need the projects available in your local development environment. 
+
+To get the foundation projects and build them, you can run: 
 
 ```shell
 git clone https://github.com/architects4j/helidon-microstream-training-labs-foundation
+cd helidon-microstream-training-labs-foundation
+mvn clean package
 ```
 
+The build and packaging should complete successfully.

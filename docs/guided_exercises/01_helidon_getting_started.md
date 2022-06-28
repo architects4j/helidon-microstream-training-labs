@@ -21,14 +21,14 @@ To be able to go through this guided exercise, you will need to have the followi
 
 ### Creating a new project 
 
-1. Let's create a new project using mp starter. Access the page [https://start.microprofile.io/](https://start.microprofile.io/).
-   ![mp starter](images/hello-helidon-mp-started.png )
+1. Let's create a new project using MP Starter page. Access the page [https://start.microprofile.io/](https://start.microprofile.io/).
+   ![mp starter](images/01_hello_helidon_mp_started.png )
 
 2. Use the following the data and click on download. You will get a zip file with an automatically generated project for you to get started.
 
       | Method      | Description                          |
       | ----------: | -----------------------------------: |
-      | groupId       | com.fastlane  |
+      | groupId       | org.a4j  |
       | artifactId       | hello-helidon |
       | MicroProfile Version    | 3.3 |
       | Build Tool | Maven | 
@@ -42,8 +42,8 @@ To be able to go through this guided exercise, you will need to have the followi
    └── src
    └── main
    ├── java
-   │   └── com
-   │       └── fastlane
+   │   └── org
+   │       └── a4j
    │           └── hello
    │               └── helidon
    │                   ├── HelloController.java
@@ -117,7 +117,7 @@ You can use Helidon CLI for executing tasks like creating new projects and using
 
 4. Open the service in your browser: [http://localhost:8080/data/hello](http://localhost:8080/data/hello)
 
-5. On your IDE, open the class `com.fastlane.hello.helidon.HelloController` 
+5. On your IDE, open the class `org.a4j.hello.helidon.HelloController` 
 6. Change the endpoint path to `devloop` and the string returned by the method `sayHello` to `"Hello Dev Loop!"` 
 7. Back in your browser, check your changes reflected at [http://localhost:8080/data/devloop](http://localhost:8080/data/devloop)
 

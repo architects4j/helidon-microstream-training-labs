@@ -1,36 +1,120 @@
-# Java service with Helidon 
+# NoSQL persistence on Java services 
 
-In this final challenge, you will create a RESTful Java application from scratch, using Helidon. Let's take a look at the use case and the exercise goals. 
+In this exercise you can validate and practice your knowledge of the following concepts:
+
+* Java microservice implementation with Helidon;
+* Dev experience when using NoSQL databases with Java;
+* Jakarta NoSQL;
+* Implicit and constant usage of CDI;
+
+Getting familiar with the use case and the exercise goals described next is highly recommended, as a detailed
+step-by-step guide is not provided.
+
+**Friendly advice**: consider leveraging this opportunity to
+upskill by making the best use of your knowledge and research skills to code the solution without replicating the
+provided solution.
 
 ## Scenario
 
-You were recently hired by a small company Acme Store. The company is new to the online world and they have a technical team that want to evaluate what a Java service would look like in case they wanted to start an e-commerce. 
-
-Your first task is to create a sample webservice using Java programming language, and based on the JAX-RS specification. They will evaluate whether they should move forward using Java technologies, using your MVP as a starting point. They've heard of MicroProfile and are interested in a solution with Helidon.
+Acme Store contacted you to ask for advise about NoSQL databases usage in MicroProfile-based services. They need a solution built on top of the RESTFul service delivered on the previous exercise. 
+If you used the quickstart, by now you should have a microservice that relies on in-memory persistence with MicroStream. We will now add another option of persistence layer to this service, 
+allowing it to persist data on [MongoDB](mongodb.com). 
 
 ### Goals
 
-Here are the pre-requisites of the first delivery of this application:
+**About the service:**
 
-- [ ] The new application should be called `acme-store-service`. It should use Microprofile 3.3 and Helidon.
-- The goal is to work with products. The `Product` should have:
-    - [ ] The ID is the `name` : mandatory and should be at max 100 chars. 
-    - [ ] A `description`:  mandatory, should have at least 5 chars 
-    - [ ] A `quantity`: mandatory and should be higher than 0. 
-- It should allow all the CRUD operations for a `Product`:
-    - [ ] List all the products 
-    - [ ] Insert a new product 
-    - [ ] Retrieve a product by ID 
-    - [ ] Update a product based on its ID 
-    - [ ] Delete a product using its ID
-- It should follow REST patterns. The urls should follow these rules:
-    - [ ] To list all products:  GET "/products/"
-    - [ ] To find a product by ID: GET "/products/{productName}"
-    - [ ] To delete a product: DELETE "/products/{productName}"
-    - [ ] To update a product: PUT "/products/{productName}"
-    - [ ] To insert a product: POST "/products/{productName}"
-- [ ] Document the API using [Open-API](https://swagger.io/specification/) with the [Eclipse Microprofile-Open-API](https://github.com/eclipse/microprofile-open-api) .
-- [ ] Store the products in a Postgresql through JPA
+- You should adapt an existing application, the `acme-store-rest` application. It uses Microprofile 3.3 + Helidon and MicroStream for persistence.
+- The service handles `Product`, and provides RESTFul operations for it:
+    - List all products:  GET "/products/"
+    - Find a product by ID: GET "/products/{productName}"
+    - Delete a product: DELETE "/products/{productName}"
+    - Update a product: PUT "/products/{productName}"
+    - Insert a product: POST "/products/{productName}"
+- The APIs are documented with the [Eclipse Microprofile-Open-API](https://github.com/eclipse/microprofile-open-api);
+- It's persistence layer relies on MicroStream for performant in-memory persistence capabilities.
+
+**Goals:**
+
+
+## Implementation
+
+1. Add dependency to pom.xml
+1. Add MongoDB configurations to `microprofile-config.properties`:
+```properties
+# MongoDB Configs
+document=document
+document.database=restaurant
+document.settings.jakarta.nosql.host=localhost:27017
+document.provider=org.eclipse.jnosql.communication.mongodb.document.MongoDBDocumentConfiguration
+```
+1. Configure the `Product` as an Entity.
+   1. Add the @jakarta.nosql.mapping.Entity declaration;
+   2. Add an empty constructor method;
+   3. Annotate the attributes with adequate column configurations. Use @Id and @Column. Remember, the attributes can no longer be final.
+
+2. In the package `org.a4j.product.infra` create a new class `DocumentManagerProducer`:
+```java
+package org.a4j.product.infra;
+
+//TODO: Set this bean as ApplicationScope
+class DocumentManagerProducer {
+
+    //TODO: Use CDI to inject this bean
+    //TODO: Obtain the `document` value configured in microprofile-config.properties. Use @ConfigProperty.
+    private DocumentCollectionManager manager;
+    
+    // TODO: Configure as a producer with @Produces
+    public DocumentCollectionManager getManager() {
+        return manager;
+    }
+
+    public void destroy(@Disposes DocumentCollectionManager manager) {
+        manager.close();
+    }
+}
+```
+1. Add a new `ProductRepository` interface. It should extend the `Repository` interface:
+```java
+extends Repository<Product, String> 
+```
+2. In the `ProductResource`, let's change the persistence layer. Replace the existing repository based on `Inventory` with our new one `ProductResource`.
+```java
+//**Before:** 
+private Inventory repository;
+//**After:**
+@Inject
+private ProductRepository repository;
+```
+3. Delete the following injection method as we're already injecting in the attribute level:
+```java
+    @Inject
+    ProductResource(Inventory repository) {
+        this.repository = repository;
+    }
+```
+
+4. At this point, you will notice the code doesn't compile since the method `findAll` does not exist in the repository. Currently, (v1.0.0-b4) the `jakarta.nosql.mapping.Repository` does not offer 
+   a `findAll` out-of-the-box. It does offer `save`, `deleteById`, `findById`, `existsById` and `count`, therefore, the only method you need to att to the `ProductRepository` interface to deliver 
+   the existing endpoints is the `getAll` method. In the `ProductRepository`, add the method signature. Example:
+```java
+List<Product> findAll();
+```
+
+
+
+
+
+
+
+
+
+
+Here are the pre-requisites for the deliverable:
+
+- The service should provide CRUD operations for products data on top of MongoDB, a NoSQL database. 
+  - 
+
 
 ## Implementing the project
 

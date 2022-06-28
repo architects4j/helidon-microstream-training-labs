@@ -28,7 +28,7 @@ When getting started with CDI, there are key concepts developers be aware of:
 
     For detailed explanation and examples refer to the [CDI's user guides](https://docs.jboss.org/cdi/learn/userguide/CDI-user-guide.html).
 
-The fundamental concept to learn is the **managed bean**. According the the [CDI's user guides](https://docs.jboss.org/cdi/learn/userguide/CDI-user-guide.html#_what_is_a_bean):
+The fundamental concept to learn is the **managed bean**. According the the [CDIn's user guides](https://docs.jboss.org/cdi/learn/userguide/CDI-user-guide.html#_what_is_a_bean):
 
 !!! Quote ""
     *"(...) Managed Beans are defined as container-managed objects with minimal programming restrictions, otherwise known by the acronym POJO (Plain Old Java Object). They support a small set of basic services, such as resource injection, lifecycle callbacks and interceptors. (...)"*.
