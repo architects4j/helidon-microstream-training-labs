@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A set of demos and guided-exercises about Microprofile with Helidon" name="description"/>
+<meta content="Karina Varela and Otávio Santana" name="author"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.3.1, mkdocs-material-8.3.8" name="generator"/>
+<title>Creating a client service with MicroProfile RestClient - Learning Microprofile</title>
+<link href="../../assets/stylesheets/main.1d29e8d0.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.cbb835fc.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="light-blue" data-md-color-primary="blue" data-md-color-scheme="slate" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#creating-a-client-service-with-microprofile-restclient">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header md-header--lifted" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Learning Microprofile" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Learning Microprofile">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Learning Microprofile
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Creating a client service with MicroProfile RestClient
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="light-blue" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="light-blue" data-md-color-media="" data-md-color-primary="blue" data-md-color-scheme="default" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/architects4j/helidon-microstream-training-labs" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 480 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+</nav>
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-tabs__inner md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../..">
+      Practicing MicroProfile with Helidon
+    </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link md-tabs__link--active" href="../00_environment/">
+        Guided exercises
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../more/training/">
+        More
+      </a>
+</li>
+</ul>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Learning Microprofile" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Learning Microprofile">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Learning Microprofile
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/architects4j/helidon-microstream-training-labs" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 480 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+        Practicing MicroProfile with Helidon
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2">
+          Guided exercises
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Guided exercises" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+          Guided exercises
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../00_environment/">
+        Environment
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../01_helidon_getting_started/">
+        Getting started with Helidon
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../02_cdi_lab/">
+        Contexts and Dependency Injection (CDI)
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Creating a client service with MicroProfile RestClient
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Creating a client service with MicroProfile RestClient
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+    Introduction
+  </a>
+<nav aria-label="Introduction" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-you-will-learn">
+    What you will learn
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#use-case">
+    Use Case
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-requisites">
+    Pre requisites
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#hands-on-practice">
+    Hands-on practice
+  </a>
+<nav aria-label="Hands-on practice" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-the-services">
+    Understanding the services
+  </a>
+<nav aria-label="Understanding the services" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-restaurant-service">
+    The restaurant service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-restaurant-client-service">
+    The restaurant client service
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-through-microprofile-restclient">
+    Integrating through MicroProfile RESTClient
+  </a>
+<nav aria-label="Integrating through MicroProfile RESTClient" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-the-restclient-interface">
+    Creating the RESTClient interface
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-the-restaurantservice-endpoint">
+    Configuring the RestaurantService endpoint
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#testing-the-service">
+    Testing the service
+  </a>
+<nav aria-label="Testing the service" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-the-restaurant-service">
+    Starting the restaurant service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-the-restaurant-client-service">
+    Starting the restaurant client service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#testing-the-restaurant-client-service">
+    Testing the restaurant client service
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_5" id="__nav_2_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_5">
+          Challenges
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Challenges" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_5">
+<span class="md-nav__icon md-icon"></span>
+          Challenges
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../challenges/04_challenge_rest/">
+        Golden service apis for ACME Store
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../challenges/05_challenge_nosql/">
+        NoSQL persistence on Java services
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3">
+          More
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="More" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          More
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../more/training/">
+        Training
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../more/architects4j/">
+        Architects4J
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+    Introduction
+  </a>
+<nav aria-label="Introduction" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#what-you-will-learn">
+    What you will learn
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#use-case">
+    Use Case
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pre-requisites">
+    Pre requisites
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#hands-on-practice">
+    Hands-on practice
+  </a>
+<nav aria-label="Hands-on practice" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#understanding-the-services">
+    Understanding the services
+  </a>
+<nav aria-label="Understanding the services" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-restaurant-service">
+    The restaurant service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#the-restaurant-client-service">
+    The restaurant client service
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-through-microprofile-restclient">
+    Integrating through MicroProfile RESTClient
+  </a>
+<nav aria-label="Integrating through MicroProfile RESTClient" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#creating-the-restclient-interface">
+    Creating the RESTClient interface
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configuring-the-restaurantservice-endpoint">
+    Configuring the RestaurantService endpoint
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#testing-the-service">
+    Testing the service
+  </a>
+<nav aria-label="Testing the service" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-the-restaurant-service">
+    Starting the restaurant service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#starting-the-restaurant-client-service">
+    Starting the restaurant client service
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#testing-the-restaurant-client-service">
+    Testing the restaurant client service
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="creating-a-client-service-with-microprofile-restclient"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.</span> Creating a client service with MicroProfile RestClient</h1>
+<h2 id="introduction"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.1</span> Introduction</h2>
+<h3 id="what-you-will-learn"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.1.1</span> What you will learn</h3>
+<p>Here are the main goals you will achieve with this hands-on execise:</p>
+<ul>
+<li>Learn the configuration required in a Helidon service to allow it to consume an external endpoints.</li>
+<li>With JAX-RS service, execute five different operations through an external service:</li>
+<li>List all</li>
+<li>Find by ID</li>
+<li>Insert</li>
+<li>Update </li>
+<li>Delete</li>
+</ul>
+<h3 id="use-case"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.1.2</span> Use Case</h3>
+<p>For this scenario, you will use an existing JAX-RS service, the <strong>restaurant</strong> <strong>service</strong>. You will create a client application that can consume all the RESTful APIs available in the <strong>restaurant</strong> <strong>service</strong>. </p>
+<p>You will start with an existing service with a foundation that will support the development of your client application. Your task is to finish the service, as all the RestClient configuration and implementation is missing.Make sure your service can properly interact with the <a href="https://github.com/architects4j/helidon-microstream-training-labs-foundation/tree/main/restaurant">restaurant service</a>.</p>
+<h2 id="pre-requisites"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.2</span> Pre requisites</h2>
+<p>To be able to go through this guided exercise, you will need to have the following components in your dev environment:</p>
+<ul>
+<li>Have finished the steps described in <a href="../00_environment/">Preparing your environment</a></li>
+</ul>
+<h2 id="hands-on-practice"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3</span> Hands-on practice</h2>
+<p>For this scenario, you should create a client service that consumes an existing JAX-RS service: the <code>restaurant service</code> . </p>
+<p>You will enhance a partially written <code>restaurant client service</code> to allow it to integrate with the following <code>restaurant service</code> APIs: </p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td>/restaurants</td>
+<td><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7Z"></path></svg></span>  Fetch all the items</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td>/restaurants/{id}</td>
+<td><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7Z"></path></svg></span>        Fetch an item by ID</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td>/restaurants</td>
+<td><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41L18 7Z"></path></svg></span>      Insert new items</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td>/restaurants/{id}</td>
+<td><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41L18 7Z"></path></svg></span>           Update items</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>/restaurants/{id}</td>
+<td><span class="twemoji"><svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg></span>               Delete items</td>
+</tr>
+</tbody>
+</table>
+<p>The client service is partially written and you are the one responsible for creating all the RestClient configuration and implementation that are missing. Your task is to finish this application and make sure you can interact with the <a href="https://github.com/architects4j/helidon-microstream-training-labs-foundation/tree/main/restaurant">restaurant service</a>.</p>
+<h3 id="understanding-the-services"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.1</span> Understanding the services</h3>
+<h4 id="the-restaurant-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.1.1</span> The restaurant service</h4>
+<p>The <code>restaurant service</code> provides RESTful APIs that allow managing the items that are currently needed by the restaurant. An item has the following structure:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"water"</span><span class="p">,</span><span class="w"> </span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Water appears as a clear, nontoxic liquid composed of hydrogen and oxygen, essential for life."</span><span class="p">,</span><span class="w"> </span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BEVERAGE"</span><span class="p">,</span><span class="w"> </span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">  </span><span class="nt">"expires"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-12-03"</span><span class="p">,</span><span class="w"> </span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">  </span><span class="nt">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"water"</span><span class="p">,</span><span class="w"> </span><span class="nt">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"L"</span><span class="p">,</span><span class="w"> </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}]</span><span class="w"></span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Since our application needs to integrate with this service, after the implementation is finished, a practical test will require both services to be up running in our environment. </p>
+<p>In the <code>restaurant service</code>, check the class <code>RestaurantController</code>. These are the endpoints your client service should consume.</p>
+<p>Next, let's check the existing code for the client service and start coding.</p>
+<h4 id="the-restaurant-client-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.1.2</span> The restaurant client service</h4>
+<ol>
+<li>
+<p>Locate and open with your IDE of choice the project <code>helidon-microstream-training-labs-foundation/restaurant-client-lab</code>. </p>
+</li>
+<li>
+<p>Open the <code>pom.xml</code> and check your project has the following dependency: 
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nt">&lt;dependency&gt;</span>
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>    <span class="nt">&lt;groupId&gt;</span>org.microprofile-ext.openapi-ext<span class="nt">&lt;/groupId&gt;</span>
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>    <span class="nt">&lt;artifactId&gt;</span>openapi-ui<span class="nt">&lt;/artifactId&gt;</span>
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>    <span class="nt">&lt;version&gt;</span>1.1.5<span class="nt">&lt;/version&gt;</span>
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+   This is the <a href="https://github.com/microprofile-extensions/openapi-ext/tree/main/openapi-ui">MP OpenAPI-UI extension</a>. It will allow you to use your browser to interact with the REST APIs you are about to create. Once you are finished, you will see something like this:</p>
+<p><img alt="Swagger API" src="../images/03_client_result_swagger.png"/></p>
+</li>
+</ol>
+<p>Let's get started with the integration of our <strong>restaurant client service</strong> and the <strong>restaurant service</strong> using MicroProfile RESTClient.</p>
+<h3 id="integrating-through-microprofile-restclient"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.2</span> Integrating through MicroProfile RESTClient</h3>
+<p>In order to consume a service using RESTClient, we will:</p>
+<ul>
+<li>Create an <code>interface</code> that will match the service operations we want to be able to invoke;</li>
+<li>Set up the appropriate annotations to configure this <code>interface</code> as a rest client;</li>
+<li>Add to the <code>application properties</code> a reference to the external service that will be consumed by the rest client; </li>
+</ul>
+<h4 id="creating-the-restclient-interface"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.2.1</span> Creating the RESTClient interface</h4>
+<ol>
+<li>Open the <code>restaurant-client-lab</code> in your IDE.</li>
+<li>
+<p>Locate and open the <code>RestaurantService</code> interface. </p>
+<p>This is the interface we'll use as a RestClient to consume the external API exposed by <a href="https://github.com/architects4j/helidon-microstream-training-labs-foundation/blob/main/restaurant/src/main/java/org/a4j/restaurant/RestaurantController.java">Restaurant Controller</a> part of the <code>restaurant-service</code>.</p>
+</li>
+<li>
+<p>Configure this <code>interface</code> as a RESTClient by adding, before the interface's name, the annotations <code>@Path("restaurants")</code> and <code>@RegisterRestClient</code> . It will look like this:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nd">@Path</span><span class="p">(</span><span class="s">"restaurants"</span><span class="p">)</span><span class="w"></span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="nd">@RegisterRestClient</span><span class="w"></span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">RestaurantService</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+</code></pre></div></p>
+</li>
+<li>
+<p>The next step is to create the contract of the methods you will consume on the external service. </p>
+<p>As a first example, let's check the insert operation. The <a href="https://github.com/architects4j/helidon-microstream-training-labs-foundation/blob/main/restaurant/src/main/java/org/a4j/restaurant/RestaurantController.java"><code>RestaurantController</code></a> <em>(part of the  <code>restaurant-service</code>)</em>, has the following method:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="w">    </span><span class="nd">@POST</span><span class="w"></span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="nd">@Valid</span><span class="w"> </span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Response</span><span class="p">.</span><span class="na">status</span><span class="p">(</span><span class="n">Response</span><span class="p">.</span><span class="na">Status</span><span class="p">.</span><span class="na">CREATED</span><span class="p">)</span><span class="w"></span>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">        </span><span class="p">.</span><span class="na">entity</span><span class="p">(</span><span class="n">repository</span><span class="p">.</span><span class="na">save</span><span class="p">(</span><span class="n">item</span><span class="p">))</span><span class="w"></span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+   In order to invoke the endpoint exposed by this method, create the following method declaration in your <strong><code>RestaurantService</code> Interface</strong>:
+   <div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="nd">@POST</span><span class="w"></span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="kd">public</span><span class="w"> </span><span class="n">Response</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></p>
+<div class="admonition success">
+<p class="admonition-title">Awesome!</p>
+<p>You've just created the first integration between your client and the external service! It's as easy as that!</p>
+</div>
+</li>
+<li>
+<p>Now, implement the other four method declarations in the <code>RestaurantService</code> interface. </p>
+<p>Make sure you have all five methods of the external service: <code>findById</code>, <code>insert</code>, <code>update</code>, <code>delete</code> and <code>getAll</code>. </p>
+</li>
+</ol>
+<h4 id="configuring-the-restaurantservice-endpoint"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.2.2</span> Configuring the RestaurantService endpoint</h4>
+<p>The next step is to create a MicroProfile configuration property, where the property's <code>name</code> is the RESTClient interface FQDN, and the <code>value</code> is the external service URL.</p>
+<ul>
+<li>Add the following property in <code>resources/META-INF/microprofile-config.properties</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="na">org.a4j.restaurant.client.RestaurantService/mp-rest/url</span><span class="o">=</span><span class="s">http://localhost:8080/</span><span class="w"></span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Good job</p>
+<p>The client configuration is now done. You've learned that when using RESTClient, the integration is done with really few code. The contract goes within the interface and all configuration within the <code>microprofile-config.properties</code> file. </p>
+</div>
+<h3 id="testing-the-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.3</span> Testing the service</h3>
+<p>To test this service you need to run two applications, the <code>restaurant-service</code> and the <code>restaurant-client-service</code>. Each service will run in a different port.</p>
+<h4 id="starting-the-restaurant-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.3.1</span> Starting the restaurant service</h4>
+<p>To start the restaurant service locally, follow these steps:</p>
+<ol>
+<li>Open the terminal;</li>
+<li>Access the foundation project directory, e.g.:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nb">cd</span> <span class="nv">$YOUR_CUSTOM_DIR</span>/helidon-microstream-training-labs-foundation/restaurant
+</code></pre></div></li>
+<li>Package and run the service:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a>mvn clean package 
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a>java -jar target/restaurant.jar
+</code></pre></div></li>
+<li>
+<p>Use your browser to confirm the service is up and running at:</p>
+<ul>
+<li>Restaurant service: <a href="">http://localhost:8080/</a></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">About the restaurant service persistence</p>
+<p>For this lab's learning purpose a database persistence is not required. The service uses an <a href="https://github.com/architects4j/helidon-microstream-training-labs-foundation/blob/main/restaurant/src/main/java/org/a4j/restaurant/RestaurantRepositoryMemory.java">in-memory list</a> to store and retrieve data. </p>
+<p>To simplify the lab it is also initialized with two items in the list : "Water" and "Juice".</p>
+</div>
+</li>
+</ol>
+<p>Now, let's package and run our client.</p>
+<h4 id="starting-the-restaurant-client-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.3.2</span> Starting the restaurant client service</h4>
+<ol>
+<li>On a different terminal tab, access the service directory. e.g.
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="nb">cd</span> <span class="nv">$YOUR_CUSTOM_DIR</span>/helidon-microstream-training-labs-foundation/restaurant-client-lab
+</code></pre></div></li>
+<li>
+<p>Package and run the service:
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a>mvn clean package pom.xml 
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>java -jar target/restaurant-client-lab.jar
+</code></pre></div></p>
+</li>
+<li>
+<p>Use your browser to confirm the service is up and running at</p>
+<ul>
+<li>Restaurant client service: <a href="">http://localhost:8081/</a></li>
+</ul>
+</li>
+</ol>
+<h4 id="testing-the-restaurant-client-service"><span class="enumerate-headings-plugin enumerate-heading-plugin">4.3.3.3</span> Testing the restaurant client service</h4>
+<ol>
+<li>
+<p>Your client includes the microprofile extension ui for OpenAPI. To access the ui, open:</p>
+<ul>
+<li>Client OpenAPI UI: <a href="http://localhost:8081/openapi-ui">http://localhost:8081/openapi-ui</a>.</li>
+</ul>
+</li>
+<li>
+<p>Select the <strong>GET /items</strong> endpoint, click on "<strong>try it out</strong>" button, and then on the "<strong>Execute</strong>" blue button.</p>
+<p>You should get an <code>HTTP 200</code> response and a list with two items.</p>
+<p><img alt="GET Result" src="../images/03_test_get.png"/></p>
+</li>
+<li>
+<p>Now, use your client service API to delete the "<strong>juice</strong>" item. In your browser, locate the <a href="http://localhost:8081/openapi-ui/index.html#/default/delete_items__id_">DELETE items endpoint</a> and click on <strong>"Try it out"</strong>.</p>
+</li>
+<li>
+<p>Type <code>juice</code> in the <code>Id</code> field and click on the <strong>Execute</strong> button.<br/>
+<img alt="Delete item" src="../images/03_test_delete.png"/></p>
+</li>
+<li>
+<p>Finally, confirm that the item was deleted and is not retrieved with the <a href="http://localhost:8081/openapi-ui/index.html#/default/get_items">GET items endpoint</a> endpoint. The response should be an <code>HTTP 200</code> and <code>juice</code> should not be in the list.
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="p">[</span><span class="w"></span>
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="w">  </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Water appears as a clear, nontoxic liquid composed of hydrogen and oxygen, essential for life"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">    </span><span class="nt">"expires"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-05-29"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w">    </span><span class="nt">"ingredients"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="w">      </span><span class="p">{</span><span class="w"></span>
+<a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"water"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="w">        </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-10-9" id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="w">        </span><span class="nt">"unit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"L"</span><span class="w"></span>
+<a href="#__codelineno-10-10" id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="w">      </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-10-11" id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="w">    </span><span class="p">],</span><span class="w"></span>
+<a href="#__codelineno-10-12" id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"water"</span><span class="p">,</span><span class="w"></span>
+<a href="#__codelineno-10-13" id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BEVERAGE"</span><span class="w"></span>
+<a href="#__codelineno-10-14" id="__codelineno-10-14" name="__codelineno-10-14"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a href="#__codelineno-10-15" id="__codelineno-10-15" name="__codelineno-10-15"></a><span class="p">]</span><span class="w"></span>
+</code></pre></div></p>
+</li>
+</ol>
+<p>Feel free to use the OpenAPI UI, postman or cURL to test all your service's endpoints.</p>
+<div class="admonition success">
+<p class="admonition-title">Congratulations</p>
+<p>Congratulations, you've implemented a client service application with Helidon and Microprofile that can consume  an external JAX-RS service by using the new RESTClient MicroProfile!</p>
+</div>
+<hr/>
+<div class="md-source-file">
+<small>
+    
+      Last update:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-06-28</span>
+</small>
+</div>
+</article>
+</div>
+</div>
+<a class="md-top md-icon" data-md-component="top" hidden="" href="#">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"></path></svg>
+            Back to top
+          </a>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Contexts and Dependency Injection (CDI)" class="md-footer__link md-footer__link--prev" href="../02_cdi_lab/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Contexts and Dependency Injection (CDI)
+            </div>
+</div>
+</a>
+<a aria-label="Next: Golden service apis for ACME Store" class="md-footer__link md-footer__link--next" href="../challenges/04_challenge_rest/" rel="next">
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Next
+              </span>
+              Golden service apis for ACME Store
+            </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+<div class="md-copyright__highlight">
+      Developed with 🤍   by Architects4j
+    </div>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.prune", "toc.follow", "navigation.top"], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.0238f547.min.js"></script>
+</body>
+</html>
